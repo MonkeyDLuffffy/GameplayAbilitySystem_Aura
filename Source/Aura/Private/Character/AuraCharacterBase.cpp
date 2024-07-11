@@ -4,6 +4,7 @@
 #include "Character/AuraCharacterBase.h"
 
 
+
 AAuraCharacterBase::AAuraCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -12,6 +13,11 @@ AAuraCharacterBase::AAuraCharacterBase()
 
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
+}
+
+UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
 }
 
 
