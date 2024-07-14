@@ -44,14 +44,16 @@ void AAuraCharacter::InitAbilityActorInfo()
 	AAuraPlayerState* AuraPlayerState= GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
 	AuraPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(AuraPlayerState,this);
+	
 	AbilitySystemComponent=AuraPlayerState->GetAbilitySystemComponent();
+
+	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 	AttributeSet=AuraPlayerState->GetAttributeSet();
 
-	AAuraPlayerController* AuraPlayerController= Cast<AAuraPlayerController>(GetController());
-	if(AuraPlayerController)
+	
+	if(AAuraPlayerController* AuraPlayerController= Cast<AAuraPlayerController>(GetController()))
 	{
-		AAuraHUD* AuraHUD= Cast<AAuraHUD>(AuraPlayerController->GetHUD());
-		if(AuraHUD)
+		if(AAuraHUD* AuraHUD= Cast<AAuraHUD>(AuraPlayerController->GetHUD()))
 		{
 			AuraHUD->InitOverlay(AuraPlayerController,AuraPlayerState,AbilitySystemComponent,AttributeSet);
 		}
