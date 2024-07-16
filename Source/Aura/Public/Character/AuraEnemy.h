@@ -24,6 +24,9 @@ public:
 	virtual  void UnHightlightActor() override;
 	/**end Enemy Interface */
 
+	/**Combat Interface */
+	virtual int32 GetPlayerLevel() override;
+	/**end Combat Interface */
 	
 	UPROPERTY(BlueprintReadOnly)
 	bool bHightlight=false;
@@ -32,4 +35,8 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void InitAbilityActorInfo() override;
+
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Character Class Default")
+	int32 Level=1;
 };
