@@ -7,15 +7,33 @@
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
 #include "GameplayEffectTypes.h"
-#include "../../../../../../Program Files/Epic Games/UE_5.2/Engine/Plugins/Experimental/NNI/Source/ThirdParty/Deps/gsl/gsl-lite.hpp"
 #include "Net/UnrealNetwork.h"
-
+#include "AuraGameplayTags.h"
 
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
-	InitHealth(10.f);
-	InitMana(10.f);
+	const FAuraGameplayTags& GameplayTags=FAuraGameplayTags::Get();
+	
+	TagsToAttributeMap.Add(GameplayTags.Attribute_Primary_Strength,GetStrengthAttribute);
+	TagsToAttributeMap.Add(GameplayTags.Attribute_Primary_Intelligence,GetIntelligenceAttribute);
+	TagsToAttributeMap.Add(GameplayTags.Attribute_Primary_Resilience,GetResilienceAttribute);
+	TagsToAttributeMap.Add(GameplayTags.Attribute_Primary_Vigor,GetVigorAttribute);
+
+	TagsToAttributeMap.Add(GameplayTags.Attribute_Secondary_Armor,GetArmorAttribute);
+	TagsToAttributeMap.Add(GameplayTags.Attribute_Secondary_ArmorPenetration,GetArmorPenetrationAttribute);
+	TagsToAttributeMap.Add(GameplayTags.Attribute_Secondary_BlockChance,GetBlockChanceAttribute);
+	TagsToAttributeMap.Add(GameplayTags.Attribute_Secondary_CriticalHitChance,GetCriticalHitChanceAttribute);
+	TagsToAttributeMap.Add(GameplayTags.Attribute_Secondary_CriticalHitDamage,GetCriticalHitDamageAttribute);
+	TagsToAttributeMap.Add(GameplayTags.Attribute_Secondary_CriticalHitResistance,GetCriticalHitResistanceAttribute);
+	TagsToAttributeMap.Add(GameplayTags.Attribute_Secondary_HealthRegeneration,GetHealthRegenerationAttribute);
+	TagsToAttributeMap.Add(GameplayTags.Attribute_Secondary_ManaRegeneration,GetManaRegenerationAttribute);
+	TagsToAttributeMap.Add(GameplayTags.Attribute_Secondary_MaxHealth,GetMaxHealthAttribute);
+	TagsToAttributeMap.Add(GameplayTags.Attribute_Secondary_MaxMana,GetMaxManaAttribute);
+
+	TagsToAttributeMap.Add(GameplayTags.Attribute_Vital_Health,GetHealthAttribute);
+	TagsToAttributeMap.Add(GameplayTags.Attribute_Vital_Mana,GetManaAttribute);
+	
 }
 
 void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

@@ -15,7 +15,6 @@
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 //	ATTRIBUTE_ACCESSORS(UMyHealthSet, Health)
 
-
 USTRUCT()
 struct FEffectProperties
 {
@@ -44,6 +43,10 @@ struct FEffectProperties
 	FEffectProperties(){}
 	
 };
+//Typedef is specific to the FGameplayAttribute() signature , but TStaticFunPtr is generic to any signature chosen.
+//typedef TBaseStaticDelegateInstance<FGameplayAttribute(),FDefaultDelegateUserPolicy>::FFuncPtr FAttributeFunPtr;
+template<class T>
+using TStaticFuncPtr=typename TBaseStaticDelegateInstance<T,FDefaultDelegateUserPolicy>::FFuncPtr;
 /**
  * 
  */
@@ -60,7 +63,9 @@ public:
 
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
+	TMap<FGameplayTag,TStaticFuncPtr<FGameplayAttribute()>>TagsToAttributeMap;
 
+	//
 	/*
 	 * Primary Attributes 
 	 */

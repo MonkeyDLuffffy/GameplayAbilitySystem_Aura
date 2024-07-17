@@ -35,7 +35,7 @@ struct FWidgetControllerParams
 		
 	}
 	
-	FWidgetControllerParams(APlayerController * PC,APlayerState * PS,UAbilitySystemComponent *ASC,UAttributeSet*AS):
+	FWidgetControllerParams( APlayerController * PC,  APlayerState * PS, UAbilitySystemComponent *ASC,UAttributeSet*AS):
 	PlayerController(PC),PlayerState(PS),AbilitySystemComponent(ASC),AttributeSet(AS)
 	{
 		
@@ -52,6 +52,8 @@ class AURA_API UAuraWidgetController : public UObject
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWidgetControllerParams& WCParams);
+
+	UFUNCTION(BlueprintCallable)
 	virtual void BroadcastInitialValues();
 
 	virtual void BindCallbacksToDependencies();
