@@ -35,6 +35,7 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 	//Init ability actor info for the server
 	this->InitAbilityActorInfo();
+	this->AddCharacterAbilities();
 }
 
 void AAuraCharacter::OnRep_PlayerState()
@@ -42,6 +43,7 @@ void AAuraCharacter::OnRep_PlayerState()
 	Super::OnRep_PlayerState();
 	//Init ability actor info for the client
 	this->InitAbilityActorInfo();
+	
 }
 
 void AAuraCharacter::InitAbilityActorInfo()
