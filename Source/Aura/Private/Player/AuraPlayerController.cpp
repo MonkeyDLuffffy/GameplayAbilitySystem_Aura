@@ -24,6 +24,19 @@ AAuraPlayerController::AAuraPlayerController()
 	
 }
 
+FVector AAuraPlayerController::GetMouseCursorLocation() const
+{
+	return CursorHit.Location;
+}
+
+bool AAuraPlayerController::FindMouseResultHit(FHitResult& HitResult) const
+{
+	HitResult = CursorHit;
+	return HitResult.bBlockingHit;
+}
+
+
+
 void AAuraPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
@@ -36,7 +49,7 @@ void AAuraPlayerController::CursorTrace()
 {
 	GetHitResultUnderCursor(ECC_Visibility,false,CursorHit);
 	if(!CursorHit.bBlockingHit) return;
-
+	
 	LastActor = ThisActor;
 	ThisActor=	Cast<IEnemyInterface>(CursorHit.GetActor());
 
@@ -94,7 +107,9 @@ void AAuraPlayerController::SetupInputComponent()
 
 	UAuraInputComponent * AuraInputComponent=CastChecked<UAuraInputComponent>(InputComponent);
 	AuraInputComponent->BindAction(MoveAction,ETriggerEvent::Triggered,this,&AAuraPlayerController::Move);
-
+	AuraInputComponent->BindAction(ShiftAction,ETriggerEvent::Started,this,&AAuraPlayerController::ShiftPressed);
+	AuraInputComponent->BindAction(ShiftAction,ETriggerEvent::Completed,this,&AAuraPlayerController::ShiftReleased);
+	
 	AuraInputComponent->BindAbilityActions(InputConfig,this,&ThisClass::AbilityInputTagPressed,&ThisClass::AbilityInputTagReleased,&ThisClass::AbilityInputTagHeld);
 	
 }
@@ -118,6 +133,7 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 
 
 
+
 void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
 	if(InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
@@ -137,11 +153,9 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 		return;
 	}
 
-	if(bTargeting)
-	{
-		if(GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
-	}
-	else
+	if(GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
+	
+	if(!bTargeting && !bShiftKeyDown)
 	{
 		const APawn * ControlledPawn = GetPawn();
 		if(FollowTime <= ShortPressThreshold && ControlledPawn)
@@ -172,7 +186,7 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 		return;
 	}
 
-	if(bTargeting)
+	if(bTargeting || bShiftKeyDown)
 	{
 		if(GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
 	}

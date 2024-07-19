@@ -24,6 +24,9 @@ class AURA_API AAuraPlayerController : public APlayerController
 public:
 
 	AAuraPlayerController();
+	FVector GetMouseCursorLocation() const;
+
+	bool  FindMouseResultHit(FHitResult & HitResult) const;
 protected:
 
 	virtual void PlayerTick(float DeltaTime) override;
@@ -37,9 +40,17 @@ private:
 	UPROPERTY(EditAnywhere,Category="Input")
 	TObjectPtr<UInputAction> MoveAction;
 
-	void Move(const FInputActionValue &InputActionValue) ; 
+	UPROPERTY(EditAnywhere, Category="Input")
+	TObjectPtr<UInputAction> ShiftAction;
+
+	void Move(const FInputActionValue &InputActionValue) ;
+	void ShiftPressed(){ bShiftKeyDown = true; }
+	void ShiftReleased(){ bShiftKeyDown = false; }
+	bool bShiftKeyDown = false;
 
 	void CursorTrace();
+
+	
 
 	IEnemyInterface *LastActor;
 	IEnemyInterface *ThisActor;
