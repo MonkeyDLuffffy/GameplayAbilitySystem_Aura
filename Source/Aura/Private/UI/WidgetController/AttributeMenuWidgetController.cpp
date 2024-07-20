@@ -27,12 +27,6 @@ void UAttributeMenuWidgetController::BroadcastInitialValues()
 	{
 		BroadcastAttributeInfo(Pair.Key,Pair.Value());
 	}
-	
-	/*
-	FAuraAttributeInfo AuraAttributeInfo= AttributeInfo->FindAttributeInfoForTag(FAuraGameplayTags::Get().Attribute_Primary_Strength);
-	AuraAttributeInfo.AttributeValue=AuraAttributeSet->GetStrength();
-	AttributeInfoDelegate.Broadcast(AuraAttributeInfo);
-	*/
 }
 
 void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& GameplayTag,
