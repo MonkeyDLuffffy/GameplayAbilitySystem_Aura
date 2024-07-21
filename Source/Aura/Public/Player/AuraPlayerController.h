@@ -13,6 +13,7 @@ struct FInputActionValue;
 class IEnemyInterface;
 class UAuraAbilitySystemComponent;
 class USplineComponent;
+class UDamageTextComponent;
 
 /**
  * 
@@ -25,8 +26,10 @@ public:
 
 	AAuraPlayerController();
 	FVector GetMouseCursorLocation() const;
-
 	bool  FindMouseResultHit(FHitResult & HitResult) const;
+
+	UFUNCTION(Client, Reliable)
+	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter);
 protected:
 
 	virtual void PlayerTick(float DeltaTime) override;
@@ -80,5 +83,8 @@ private:
 	TObjectPtr<USplineComponent>Spline;
 
 	void AutoRun();
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 };
 

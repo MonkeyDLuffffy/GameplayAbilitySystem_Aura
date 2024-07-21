@@ -9,6 +9,9 @@
 #include "GameplayEffectTypes.h"
 #include "Net/UnrealNetwork.h"
 #include "AuraGameplayTags.h"
+#include "Interaction/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
+#include "Player/AuraPlayerController.h"
 
 
 UAuraAttributeSet::UAuraAttributeSet()
@@ -123,6 +126,8 @@ void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
 	
 }
 
+
+
 void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
@@ -133,15 +138,54 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	if(Data.EvaluatedData.Attribute==GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(),0.0f,GetMaxHealth()));
-		UE_LOG(LogTemp,Warning,TEXT("Change Health on %s, Health: %f"),*Props.TargetAvatarActor->GetName(),GetHealth());
+	
 	}
 	
-
+	/* 使用战斗伤害属性来处理伤害，计算伤害后，应用到生命值中*/
 	if(Data.EvaluatedData.Attribute==GetManaAttribute())
 	SetMana(FMath::Clamp(GetMana(),0.0f,GetMaxMana()));
-	
 
+	if(Data.EvaluatedData.Attribute == GetImcomingDamageAttribute())
+	{
+		const float LocalIncomingDanage = GetImcomingDamage();
+		SetImcomingDamage(0.f);
+		if(LocalIncomingDanage > 0.f)
+		{
+			const float NewHealth=GetHealth() - LocalIncomingDanage;
+			SetHealth(FMath::Clamp(NewHealth,0.f,GetMaxHealth()));
+			UE_LOG(LogTemp,Warning,TEXT("Change Health on %s, Health: %f"),*Props.TargetAvatarActor->GetName(),LocalIncomingDanage);
 
+			const bool bFatal = NewHealth <= 0.f;
+			if(bFatal)
+			{
+				if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor))
+				{
+					CombatInterface->Die();
+				}
+				
+			}
+			else
+			{
+				/*受到伤害后，如果没死亡，则激活受击反应能力*/
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
+				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			}
+
+			ShowFloatingText(Props,LocalIncomingDanage);
+		}
+	}
+}
+
+void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage) const
+{
+	if(Props.SourceCharacter != Props.TargetCharacter)
+	{
+		if(AAuraPlayerController* PC =	Cast<AAuraPlayerController>(UGameplayStatics::GetPlayerController(Props.SourceCharacter, 0)))
+		{
+			PC->ShowDamageNumber(Damage,Props.TargetCharacter);
+		}
+	}
 }
 
 void UAuraAttributeSet::OnRep_Strength(const FGameplayAttributeData& OldStrength) const

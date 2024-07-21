@@ -85,20 +85,6 @@ public:
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_Vigor,Category="Vital Attributes")
 	FGameplayAttributeData Vigor;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,Vigor);
-	
-	/*
-	*Vital Attributes	
-	*/
-	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_Health,Category="Vital Attributes")
-	FGameplayAttributeData Health;
-	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,Health);
-	
-	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_Mana,Category="Mana Attribute")
-	FGameplayAttributeData Mana;
-	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,Mana);
-
-
-
 
 	/*
 	 * Secondary Attributes
@@ -152,6 +138,24 @@ public:
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_MaxMana,Category="Mana Attribute")
 	FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,MaxMana);
+
+	/*
+	*Vital Attributes	
+	*/
+	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_Health,Category="Vital Attributes")
+	FGameplayAttributeData Health;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,Health);
+	
+	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_Mana,Category="Mana Attribute")
+	FGameplayAttributeData Mana;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,Mana);
+
+	/*
+	 * Meta Attributes
+	 */
+	UPROPERTY(BlueprintReadOnly,Category= "Meta Attributes")
+	FGameplayAttributeData ImcomingDamage;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,ImcomingDamage);
 	
 
 	UFUNCTION()
@@ -200,4 +204,7 @@ public:
 	void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const;
 private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data,FEffectProperties&Props) const;
+
+	/*显示伤害数字*/
+	void ShowFloatingText(const FEffectProperties& Props, float Damage) const;
 };

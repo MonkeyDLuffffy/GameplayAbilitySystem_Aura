@@ -31,4 +31,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="AuraAbilitySystemLibrary|ApplyEffect")
 	static void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level, UAbilitySystemComponent* ASC);
+
+	static void GiveStartupAbilities(const UObject *WorldContextObject, UAbilitySystemComponent* ASC);
 };
