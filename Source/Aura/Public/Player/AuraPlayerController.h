@@ -29,7 +29,9 @@ public:
 	bool  FindMouseResultHit(FHitResult & HitResult) const;
 
 	UFUNCTION(Client, Reliable)
-	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter);
+	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter,const bool bIsBlockedHit,const bool bIsCriticalHit);
+
+	
 protected:
 
 	virtual void PlayerTick(float DeltaTime) override;

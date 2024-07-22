@@ -38,15 +38,23 @@ bool AAuraPlayerController::FindMouseResultHit(FHitResult& HitResult) const
 	return HitResult.bBlockingHit;
 }
 
-void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter)
+void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter,const bool bIsBlockedHit,const bool bIsCriticalHit)
 {
+	if(HasAuthority())
+	{
+		UE_LOG(LogTemp,Warning,TEXT("playercontroller is Server")) ;
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("playercontroller is Client")) 
+	}
 	if(IsValid(TargetCharacter) && DamageTextComponentClass)
 	{
 		UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
 		DamageText->RegisterComponent();
 		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(),FAttachmentTransformRules::KeepRelativeTransform);
 		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-		DamageText->SetDamageText(DamageAmount);
+		DamageText->SetDamageText(DamageAmount, bIsBlockedHit, bIsCriticalHit);
 	}
 }
 

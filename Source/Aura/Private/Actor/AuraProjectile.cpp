@@ -60,7 +60,9 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappPrimitiveComp
 {
 	UGameplayStatics::PlaySoundAtLocation(this,ImpactSound,GetActorLocation(),FRotator::ZeroRotator);
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this,ImpactEffect,GetActorLocation());
-	LoopingSoundComponent->Stop();
+	if(LoopingSoundComponent) LoopingSoundComponent->Stop();
+	
+	
 	if(HasAuthority())
 	{
 		if(UAbilitySystemComponent* targetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
