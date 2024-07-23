@@ -33,7 +33,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	{
 		const FVector SocketLocation =	CombatInterface->GetCombatSocketLocation();
 		FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
-		Rotation.Pitch = 0.f;
+		//Rotation.Pitch = 0.f;
 		FTransform SpawnTransform;
 		SpawnTransform.SetLocation(SocketLocation);
 		SpawnTransform.SetRotation(Rotation.Quaternion());
@@ -62,6 +62,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 
 		FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
 
+		/*将伤害分配到SpecHandle中*/
 		for (TTuple<FGameplayTag, FScalableFloat>& Pair : DamageTypeMap)
 		{
 			const float ScaleDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());

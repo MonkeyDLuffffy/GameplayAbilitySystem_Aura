@@ -40,15 +40,7 @@ bool AAuraPlayerController::FindMouseResultHit(FHitResult& HitResult) const
 
 void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter,const bool bIsBlockedHit,const bool bIsCriticalHit)
 {
-	if(HasAuthority())
-	{
-		UE_LOG(LogTemp,Warning,TEXT("playercontroller is Server")) ;
-	}
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("playercontroller is Client")) 
-	}
-	if(IsValid(TargetCharacter) && DamageTextComponentClass)
+	if(IsValid(TargetCharacter) && DamageTextComponentClass && IsLocalController())
 	{
 		UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
 		DamageText->RegisterComponent();
@@ -190,8 +182,13 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 				{
 					Spline->AddSplinePoint(PointLoc,ESplineCoordinateSpace::World);
 				}
-				bAutoRunning = true;
-				CachedDestination = NavPath->PathPoints[NavPath->PathPoints.Num()-1];
+				
+				if(NavPath->PathPoints.Num() > 0)
+				{
+					bAutoRunning = true;
+					CachedDestination = NavPath->PathPoints[NavPath->PathPoints.Num()-1];
+				}
+				
 			}
 			
 		}

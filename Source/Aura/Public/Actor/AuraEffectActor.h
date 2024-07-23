@@ -41,9 +41,12 @@ protected:
 	virtual void BeginPlay() override;
 	
 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Applied Effects")
-	bool bDestroyOnEffectRemoval=false;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Applied Effects")
+	bool bDestroyOnEffectApplication = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Applied Effects")
+	bool bApplyEffectsToEnemies = false;
+	
 	UFUNCTION(BlueprintCallable)
 	void ApplyEffectToTarget(AActor* Target,TSubclassOf<UGameplayEffect>GameplayEffectClass);
 
@@ -72,5 +75,5 @@ protected:
 	TMap<FActiveGameplayEffectHandle,UAbilitySystemComponent*> ActiveEffectHandleMap;
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Applied Effects")
-	float Actorlevel=1.0f;
+	float Actorlevel = 1.0f;
 };
