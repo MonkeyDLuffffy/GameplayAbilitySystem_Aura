@@ -33,4 +33,8 @@ void UBTService_FindNearestPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	}
 	UBTFunctionLibrary::SetBlackboardValueAsObject(this, TargetToFollowSelector, ClosestActor);
 	UBTFunctionLibrary::SetBlackboardValueAsFloat(this, DistanceToTargetSelector, ClosestDistance);
+
+	if(ClosestActor == nullptr )return;
+	const FString& Msg=FString::Printf(TEXT("ClosestActor : %s ,ClosestDistance : %f"),*ClosestActor->GetName(),ClosestDistance);
+	GEngine->AddOnScreenDebugMessage(1,5.f,FColor::Red,Msg);
 }

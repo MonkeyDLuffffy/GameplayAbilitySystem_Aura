@@ -4,6 +4,7 @@
 #include "Character/AuraCharacterBase.h"
 
 #include "AbilitySystemComponent.h"
+#include "AuraGameplayTags.h"
 #include "ShaderPrintParameters.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
@@ -43,11 +44,11 @@ void AAuraCharacterBase::Die()
 	if(HasAuthority())
 	{
 		Weapon->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld,true));
-		MulticasthandleDeath();
+		MulticastHandleDeath();
 	}
 }
 
-void AAuraCharacterBase::MulticasthandleDeath_Implementation()
+void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 {
 	Weapon->SetSimulatePhysics(true);
 	Weapon->SetEnableGravity(true);
@@ -64,7 +65,8 @@ void AAuraCharacterBase::MulticasthandleDeath_Implementation()
 	GetCharacterMovement()->GravityScale = false;
 
 	Dissolve();
-	
+
+	bDead = true;
 }
 
 
@@ -75,10 +77,40 @@ void AAuraCharacterBase::BeginPlay()
 	
 }
 
-FVector AAuraCharacterBase::GetCombatSocketLocation()
+FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag )
 {
-	check(Weapon);
-	return Weapon->GetSocketLocation(WeaponTipSocketName);
+	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
+	if(MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_Weapon) && IsValid(Weapon))
+	{
+		return Weapon->GetSocketLocation(WeaponTipSocketName);
+	}
+
+	if(MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_LeftHand))
+	{
+		return GetMesh()->GetSocketLocation(LeftHandSocketName);
+	}
+	
+	if(MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_RightHand))
+	{
+		return GetMesh()->GetSocketLocation(RightHandTipSocketName);
+	}
+	//TODO Return correct socket based on MontageTag.
+	return FVector();
+}
+
+bool AAuraCharacterBase::IsDead_Implementation() const
+{
+	return bDead;
+}
+
+AActor* AAuraCharacterBase::GetAvatar_Implementation()
+{
+	return this;
+}
+
+TArray<FTaggedMontage> AAuraCharacterBase::GetAttackMontages_Implementation()
+{
+	return AttackMontages;
 }
 
 void AAuraCharacterBase::InitAbilityActorInfo()
@@ -114,15 +146,19 @@ void AAuraCharacterBase::AddCharacterAbilities()
 
 void AAuraCharacterBase::Dissolve()
 {
-	
-
-	if(IsValid(DissolveMaterialInstance) && IsValid(WeaponDissolveMaterialInstance))
+	UMaterialInstanceDynamic* MeshDynamicMatInst = nullptr;
+	UMaterialInstanceDynamic* WeaponDynamicMatInst = nullptr;
+	if(IsValid(DissolveMaterialInstance) )
 	{
-		UMaterialInstanceDynamic* MeshDynamicMatInst = UMaterialInstanceDynamic::Create(DissolveMaterialInstance,this);
+		MeshDynamicMatInst = UMaterialInstanceDynamic::Create(DissolveMaterialInstance,this);
 		GetMesh()->SetMaterial(0,MeshDynamicMatInst);
-
-		UMaterialInstanceDynamic* WeaponDynamicMatInst = UMaterialInstanceDynamic::Create(WeaponDissolveMaterialInstance,this);
-		Weapon->SetMaterial(0,WeaponDynamicMatInst);
-		StartDissolveTimeline(MeshDynamicMatInst, WeaponDynamicMatInst);
 	}
+
+	
+	if(IsValid(WeaponDissolveMaterialInstance))
+	{
+		WeaponDynamicMatInst = UMaterialInstanceDynamic::Create(WeaponDissolveMaterialInstance,this);
+		Weapon->SetMaterial(0,WeaponDynamicMatInst);
+	}
+	StartDissolveTimeline(MeshDynamicMatInst, WeaponDynamicMatInst);
 }

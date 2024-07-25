@@ -3,6 +3,35 @@
 
 #include "AbilitySystem/Abilities/AuraDamageGameplayAbility.h"
 
-void UAuraDamageGameplayAbility::SpawnProjectile(const FVector& ProjectileTargetLocation)
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
+#include "Interaction/CombatInterface.h"
+
+
+void UAuraDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 {
+
+	const FGameplayEffectSpecHandle DamageSpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, 1.f);
+
+	/*将伤害分配到SpecHandle中*/
+	for (TTuple<FGameplayTag, FScalableFloat>& Pair : DamageTypeMap)
+	{
+		const float ScaleDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());
+		
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageSpecHandle, Pair.Key, ScaleDamage);
+	}
+
+	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*DamageSpecHandle.Data.Get(),UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
+
+}
+
+FTaggedMontage UAuraDamageGameplayAbility::GetRandomTaggedMontageFromArray(
+	const TArray<FTaggedMontage>& TaggedMontages) const
+{
+	if(TaggedMontages.Num()>0)
+	{
+		const int32 Selection = FMath::RandRange(0,TaggedMontages.Num() - 1);
+		return TaggedMontages[Selection];
+	}
+	return FTaggedMontage();
 }

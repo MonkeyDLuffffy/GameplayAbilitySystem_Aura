@@ -22,12 +22,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AAuraProjectile> ProjectileClass;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<UGameplayEffect> DamageEffectClass;
-	
 
 	
-	virtual  void SpawnProjectile(const FVector& ProjectileTargetLocation) override;
+
+	UFUNCTION(BlueprintCallable)
+	virtual  void SpawnProjectile(const FVector& ProjectileTargetLocation);
 
 	
 };

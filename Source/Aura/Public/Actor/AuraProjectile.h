@@ -53,4 +53,6 @@ private:
 	float LifeSpan = 15.f;
 	
 	bool bHit = false;
+
+	void OnHit();
 };
