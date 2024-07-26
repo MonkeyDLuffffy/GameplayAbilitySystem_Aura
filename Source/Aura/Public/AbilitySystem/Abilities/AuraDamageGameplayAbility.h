@@ -29,4 +29,10 @@ protected:
 
 	UFUNCTION(BlueprintPure)
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateAttackFaceTarget();
+
+	//UPROPERTY(BlueprintReadOnly, Category = "TaggedMontage")
+	//FTaggedMontage& TaggedMontage;
 };

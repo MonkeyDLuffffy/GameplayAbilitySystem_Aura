@@ -6,6 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "Interaction/CombatInterface.h"
+#include "Interaction/EnemyInterface.h"
 
 
 void UAuraDamageGameplayAbility::CauseDamage(AActor* TargetActor)
@@ -31,7 +32,16 @@ FTaggedMontage UAuraDamageGameplayAbility::GetRandomTaggedMontageFromArray(
 	if(TaggedMontages.Num()>0)
 	{
 		const int32 Selection = FMath::RandRange(0,TaggedMontages.Num() - 1);
-		return TaggedMontages[Selection];
+		return  TaggedMontages[Selection];
 	}
 	return FTaggedMontage();
+}
+
+void UAuraDamageGameplayAbility::UpdateAttackFaceTarget()
+{
+	if(AActor* EnemyActor= IEnemyInterface::Execute_GetCombatTarget(GetAvatarActorFromActorInfo()))
+	{
+		FVector TargetLocation = EnemyActor->GetActorLocation();
+		ICombatInterface::Execute_UpdateFacingTarget(GetAvatarActorFromActorInfo(), TargetLocation);
+	}
 }
