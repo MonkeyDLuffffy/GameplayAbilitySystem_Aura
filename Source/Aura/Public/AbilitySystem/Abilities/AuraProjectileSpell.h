@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AuraGameplayTags.h"
 #include "AbilitySystem/Abilities/AuraDamageGameplayAbility.h"
 #include "AuraProjectileSpell.generated.h"
 
+struct FGameplayTag;
 class AAuraProjectile;
 class UGameplayEffect;
 /**
@@ -26,7 +28,7 @@ protected:
 	
 
 	UFUNCTION(BlueprintCallable)
-	virtual  void SpawnProjectile(const FVector& ProjectileTargetLocation);
+	void SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch = false, float PitchOverride = 0.f);
 
 	
 };

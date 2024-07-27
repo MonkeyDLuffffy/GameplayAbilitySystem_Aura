@@ -68,6 +68,16 @@ FTaggedMontage AAuraCharacterBase::GetTaggedMontageByTag_Implementation(const FG
 	return FTaggedMontage();
 }
 
+int32 AAuraCharacterBase::GetMinionCount_Implementation()
+{
+	return MinionCount;
+}
+
+void AAuraCharacterBase::IncrementMinionCount_Implementation(int32 Amount)
+{
+	MinionCount += Amount;
+}
+
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 {
 	if(DeathSound) UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation(), GetActorRotation());
@@ -114,7 +124,12 @@ FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(const FGamepl
 	
 	if(MontageTag.MatchesTagExact(GameplayTags.CombatSocket_RightHand))
 	{
-		return GetMesh()->GetSocketLocation(RightHandTipSocketName);
+		return GetMesh()->GetSocketLocation(RightHandSocketName);
+	}
+	
+	if(MontageTag.MatchesTagExact(GameplayTags.CombatSocket_Tail))
+	{
+		return GetMesh()->GetSocketLocation(TailSocketName);
 	}
 	//TODO Return correct socket based on MontageTag.
 	return FVector();

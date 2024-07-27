@@ -33,6 +33,8 @@ public:
 	virtual void Die() override;
 	virtual UNiagaraSystem* GetBloodEffect_Implementation() override;
 	virtual FTaggedMontage GetTaggedMontageByTag_Implementation(const FGameplayTag& MontageTag) override;
+	virtual int32 GetMinionCount_Implementation() override;
+	virtual void IncrementMinionCount_Implementation(int32 Amount) override;
 	/** Combat Interface*/
 	
 	UFUNCTION(NetMulticast,Reliable)
@@ -50,7 +52,9 @@ protected:
 	UPROPERTY(EditAnywhere,Category="Combat")
 	FName LeftHandSocketName = "LeftHandSocket";
 	UPROPERTY(EditAnywhere,Category="Combat")
-	FName RightHandTipSocketName = "RightHandSocket";
+	FName RightHandSocketName = "RightHandSocket";
+	UPROPERTY(EditAnywhere,Category="Combat")
+	FName TailSocketName = "TailSocket";
 	
 	bool bDead = false;
 
@@ -105,4 +109,7 @@ private:
 
 	UPROPERTY(EditAnywhere,Category="Combat")
 	TObjectPtr<UAnimMontage> HitReactMontage;
+
+	/* Minions*/
+	int32 MinionCount = 0;
 };
