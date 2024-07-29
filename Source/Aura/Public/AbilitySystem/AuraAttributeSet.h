@@ -175,6 +175,11 @@ public:
 	UPROPERTY(BlueprintReadOnly,Category= "Meta Attributes")
 	FGameplayAttributeData ImcomingDamage;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,ImcomingDamage);
+
+	UPROPERTY(BlueprintReadOnly,Category= "Meta Attributes")
+	FGameplayAttributeData ImcomingXP;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,ImcomingXP);
+	
 	
 
 	UFUNCTION()
@@ -232,6 +237,8 @@ public:
 
 	UFUNCTION()
 	void OnRep_LightningResistance(const FGameplayAttributeData& OldLightningResistance)const;
+
+
 	
 private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data,FEffectProperties&Props) const;

@@ -79,6 +79,7 @@ void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet,FireResistance,COND_None,REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet,ArcaneResistance,COND_None,REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet,LightningResistance,COND_None,REPNOTIFY_Always);
+	
 }
 
 void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
@@ -170,7 +171,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		{
 			const float NewHealth=GetHealth() - LocalIncomingDanage;
 			SetHealth(FMath::Clamp(NewHealth,0.f,GetMaxHealth()));
-			UE_LOG(LogTemp,Warning,TEXT("Change Health on %s, Health: %f"),*Props.TargetAvatarActor->GetName(),LocalIncomingDanage);
+			//UE_LOG(LogTemp,Warning,TEXT("Change Health on %s, Health: %f"),*Props.TargetAvatarActor->GetName(),LocalIncomingDanage);
 
 			const bool bFatal = NewHealth <= 0.f;
 			if(bFatal)
@@ -188,17 +189,19 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 
-				UE_LOG(LogTemp, Warning, TEXT("target Fire Resistance : %f"),GetFireResistance());
+				//UE_LOG(LogTemp, Warning, TEXT("target Fire Resistance : %f"),GetFireResistance());
 			}
-			
-			
-			ShowFloatingText(
-				Props,
-				LocalIncomingDanage,
-				UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle),
-				UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle)
-				);
+			const bool bBlock = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
+			const bool bCriticalHit = UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+			ShowFloatingText(Props, LocalIncomingDanage, bBlock, bCriticalHit);
 		}
+	}
+
+	if(Data.EvaluatedData.Attribute == GetImcomingXPAttribute())
+	{
+		const float LocalIncomingXP = GetImcomingXP();
+		SetImcomingXP(0.f);
+		UE_LOG(LogTemp, Warning, TEXT("Incoming XP: %f"),GetImcomingXP());
 	}
 }
 

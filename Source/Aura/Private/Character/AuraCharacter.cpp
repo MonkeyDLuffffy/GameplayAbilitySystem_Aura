@@ -9,6 +9,7 @@
 #include "Player/AuraPlayerController.h"
 #include "Player/AuraPlayerState.h"
 #include "UI/HUD/AuraHUD.h"
+#include "Widgets/Text/ISlateEditableTextWidget.h"
 
 AAuraCharacter::AAuraCharacter()
 {
@@ -20,7 +21,8 @@ AAuraCharacter::AAuraCharacter()
 	bUseControllerRotationPitch=false;
 	bUseControllerRotationRoll=false;
 	bUseControllerRotationYaw=false;
-	
+
+	CharacterClass = ECharacterClass::Elementalist;
 }
 
 int32 AAuraCharacter::GetPlayerLevel()
