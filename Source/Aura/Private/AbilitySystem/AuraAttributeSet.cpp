@@ -11,6 +11,7 @@
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Interaction/CombatInterface.h"
+#include "Interaction/PlayerInterface.h"
 #include "Player/AuraPlayerController.h"
 
 
@@ -180,6 +181,8 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				{
 					CombatInterface->Die();
 				}
+				///敌人死亡时，发送奖励XP的事件
+				SendXPEvent(Props);
 				
 			}
 			else
@@ -201,7 +204,37 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	{
 		const float LocalIncomingXP = GetImcomingXP();
 		SetImcomingXP(0.f);
-		UE_LOG(LogTemp, Warning, TEXT("Incoming XP: %f"),GetImcomingXP());
+		//TODO: See if we should level up
+		UE_LOG(LogTemp, Warning, TEXT("Incoming XP: %f"),LocalIncomingXP);
+		//Source Character is the owner ,Since GA_ListenForEvents applies GE_EventBasedEffect , adding to IncomingXP
+		if(Props.SourceCharacter->Implements<UPlayerInterface>() && Props.SourceCharacter->Implements<UCombatInterface>())
+		{
+			const int32 CurrentLevel = ICombatInterface::Execute_GetPlayerLevel(Props.SourceCharacter);
+			const int32 CurrentXP = IPlayerInterface::Execute_GetXP(Props.SourceCharacter);
+			const int32 NewLevel = IPlayerInterface::Execute_FindLevelForXP(Props.SourceCharacter, CurrentXP + static_cast<int32>(LocalIncomingXP));
+			const int32 NumLevelUps = NewLevel - CurrentLevel;
+
+			if(NumLevelUps > 0)
+			{
+				//TODO: GetAttributePointsReward()
+				//GETSpellPointsReward()
+				//AddToPlayerLevel()
+				//AddToAttributePoints()
+				//AddToSpellPoints()
+				//FillUpHealthAndMana()
+				const int32 AttributePointsReward = IPlayerInterface::Execute_GetAttributePointsReward(Props.SourceCharacter, CurrentLevel);
+				const int32 SpellPointsReward = IPlayerInterface::Execute_GetSpellPointsReward(Props.SourceCharacter, CurrentLevel);
+				IPlayerInterface::Execute_AddToPlayerLevel(Props.SourceCharacter, NumLevelUps);
+				IPlayerInterface::Execute_AddToAttributePoints(Props.SourceCharacter, AttributePointsReward);
+				IPlayerInterface::Execute_AddToSpellPoints(Props.SourceCharacter, SpellPointsReward);
+
+				SetHealth(GetMaxHealth());
+				SetMana(GetMaxMana());
+				IPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
+			}
+			
+			IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXP);
+		}
 	}
 }
 
@@ -222,6 +255,23 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float D
 		}
 		
 	}
+}
+
+void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props)
+{
+   if(Props.TargetCharacter->Implements<UCombatInterface>())
+   {
+	   	const int32 TargetLevel = ICombatInterface::Execute_GetPlayerLevel(Props.TargetCharacter);
+	   	const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(Props.TargetCharacter);
+	   	const int32 XPReward =20* UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(this, TargetClass, TargetLevel);
+
+		const FGameplayTag& EventTag = FAuraGameplayTags::Get().Attributes_Meta_IncomingXP;
+	   	FGameplayEventData Payload;
+   		Payload.EventTag = EventTag;
+   		Payload.EventMagnitude = XPReward;
+	   	
+	   	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Props.SourceCharacter, EventTag, Payload);
+   }
 }
 
 void UAuraAttributeSet::OnRep_Strength(const FGameplayAttributeData& OldStrength) const

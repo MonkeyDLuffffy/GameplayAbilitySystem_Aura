@@ -57,6 +57,9 @@ public:
 	FGameplayTag Damage_Lightning;
 	FGameplayTag Damage_Arcane;
 	FGameplayTag Damage_Physical;
+
+	
+	FGameplayTag Attributes_Meta_IncomingXP;
 	
 	FGameplayTag Abilities_Attack;
 	FGameplayTag Abilities_Summon;

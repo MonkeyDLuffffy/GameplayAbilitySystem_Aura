@@ -183,6 +183,7 @@ void AAuraCharacterBase::AddCharacterAbilities()
 	UAuraAbilitySystemComponent* AuraASC=CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
 
 	AuraASC->AddCharacterAbilities(StartupAbilityArray);
+	AuraASC->AddCharacterPassiveAbilities(StartupPassiveAbilityArray);
 	
 }
 

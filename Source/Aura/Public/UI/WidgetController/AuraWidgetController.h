@@ -4,14 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
-#include "UObject/NoExportTypes.h"
 #include "AuraWidgetController.generated.h"
 
+class UPanelWidget;
 class UAttributeSet;
 class UAbilitySystemComponent;
 class APlayerController;
 class APlayerState;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStateChangedSignature, int32 ,NewValue);
 USTRUCT(BlueprintType)
 struct FWidgetControllerParams
 {
@@ -69,4 +70,7 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly,Category="WightController")
 	TObjectPtr<UAttributeSet>AttributeSet;
+
+	UFUNCTION(BlueprintCallable, Category = "WidgetController")
+	static void SetAllChildrenWidgetController(const UPanelWidget* WidgetPanel,UObject* WidgetController);
 };

@@ -245,4 +245,8 @@ private:
 
 	/*显示伤害数字*/
 	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bIsBlockedHit, bool bIsCriticalHit) const;
+
+	void SendXPEvent(const FEffectProperties& Props);
+
+	
 };

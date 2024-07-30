@@ -24,11 +24,17 @@ void UOverlayWidgetController::BroadcastInitialValues()
 
 void UOverlayWidgetController::BindCallbacksToDependencies()
 {
-	if(AAuraPlayerState* AuraPS = CastChecked<AAuraPlayerState>(PlayerState))
+	AAuraPlayerState* AuraPS = CastChecked<AAuraPlayerState>(PlayerState);
+	AuraPS->OnXPChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnXPChanged);
+	AuraPS->OnLevelChangedDelegate.AddLambda(
+		[this](int32 NewLevel)
 	{
-		AuraPS->OnXPChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnXPChanged);
+		OnPlayerLevelChangedDelegate.Broadcast(NewLevel);
+	});
+	
+	
 
-	}
+
 	
 	const UAuraAttributeSet * AuraAttributeSet= CastChecked<UAuraAttributeSet>(AttributeSet);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetHealthAttribute()).AddLambda(
