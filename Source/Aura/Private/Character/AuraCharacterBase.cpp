@@ -9,6 +9,7 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Aura/Aura.h"
+#include "Aura/AuraLogChannels.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -161,6 +162,16 @@ void AAuraCharacterBase::InitAbilityActorInfo()
 
 void AAuraCharacterBase::InitializeDefaultAttributes() const
 {
+	if(HasAuthority())
+	{
+		UE_LOG(LogAura, Warning, TEXT("server Applay DefaultSecondaryAttributes, %s"), *GetName());
+	}
+	else
+	{
+		UE_LOG(LogAura, Warning, TEXT("client Applay DefaultSecondaryAttributes, %s"), *GetName());
+	}
+	
+	
 	UAuraAbilitySystemLibrary::ApplyEffectToSelf(DefaultPrimaryAttributes,1.0f,GetAbilitySystemComponent());
 	UAuraAbilitySystemLibrary::ApplyEffectToSelf(DefaultSecondaryAttributes,1.0f,GetAbilitySystemComponent());
 	UAuraAbilitySystemLibrary::ApplyEffectToSelf(DefaultVitalAttributes,1.0f,GetAbilitySystemComponent());
