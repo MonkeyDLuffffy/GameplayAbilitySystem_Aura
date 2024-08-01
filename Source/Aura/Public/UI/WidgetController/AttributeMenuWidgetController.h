@@ -10,7 +10,7 @@
 class UAttributeInfo;
 struct FAuraAttributeInfo;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttributeInfoSignature, const FAuraAttributeInfo&,Info);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedSignature, const int32, NewValue);
+
 
 /**
  * 
@@ -31,8 +31,7 @@ public:
 	//FAttributeInfoSignature AttributeInfoDelegate;
 	UPROPERTY(BlueprintAssignable,Category="GAS|AttributePoints")
 	FOnPlayerStateChangedSignature AttributePointsChangeDelegate;
-	UPROPERTY(BlueprintAssignable,Category="GAS|SpellPoints")
-	FOnPlayerStateChangedSignature SpellPointsChangeDelegate;
+
 
 	UFUNCTION(BlueprintCallable)
 	void UpgradeAttribute(const FGameplayTag& AttributeTag);

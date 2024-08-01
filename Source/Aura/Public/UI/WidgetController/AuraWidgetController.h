@@ -6,13 +6,20 @@
 #include "AbilitySystemComponent.h"
 #include "AuraWidgetController.generated.h"
 
+class UAuraAttributeSet;
+class UAuraAbilitySystemComponent;
+class AAuraPlayerState;
+class AAuraPlayerController;
 class UPanelWidget;
 class UAttributeSet;
 class UAbilitySystemComponent;
 class APlayerController;
 class APlayerState;
+class UAbilityInfo;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStateChangedSignature, int32 ,NewValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoSignature, const FAuraAbilityInfo&, Info);
+
 USTRUCT(BlueprintType)
 struct FWidgetControllerParams
 {
@@ -56,8 +63,13 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual void BroadcastInitialValues();
-
 	virtual void BindCallbacksToDependencies();
+
+	UPROPERTY(BlueprintAssignable,Category="GAS|AbilityInfo")
+	FAbilityInfoSignature AbilityInfoDelegate;
+
+	void BroadcastAbilityInfo();
+	
 protected:
 	UPROPERTY(BlueprintReadOnly,Category="WightController")
 	TObjectPtr<APlayerController> PlayerController;
@@ -71,6 +83,27 @@ protected:
 	UPROPERTY(BlueprintReadOnly,Category="WightController")
 	TObjectPtr<UAttributeSet>AttributeSet;
 
+	UPROPERTY(BlueprintReadOnly,Category="WightController")
+	TObjectPtr<AAuraPlayerController> AuraPlayerController;
+
+	UPROPERTY(BlueprintReadOnly,Category="WightController")
+	TObjectPtr<AAuraPlayerState> AuraPlayerState;
+
+	UPROPERTY(BlueprintReadOnly,Category="WightController")
+	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
+
+	UPROPERTY(BlueprintReadOnly,Category="WightController")
+	TObjectPtr<UAuraAttributeSet> AuraAttributeSet;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="widget Data")
+	TObjectPtr<UAbilityInfo> AbilityInfo;
+
+	AAuraPlayerController* GetAuraPC();
+	AAuraPlayerState* GetAuraPS();
+	UAuraAbilitySystemComponent* GetAuraASC();
+	UAuraAttributeSet* GetAuraAS();
+
+	
 	UFUNCTION(BlueprintCallable, Category = "WidgetController")
 	static void SetAllChildrenWidgetController(const UPanelWidget* WidgetPanel,UObject* WidgetController);
 };

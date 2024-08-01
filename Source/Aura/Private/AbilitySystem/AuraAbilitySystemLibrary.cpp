@@ -4,7 +4,6 @@
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 
 #include "AuraAbilityTypes.h"
-#include "AbilitySystem/Abilities/AuraGameplayAbility.h"
 #include "Game/AuraGameModeBase.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -12,36 +11,61 @@
 #include "UI/HUD/AuraHUD.h"
 #include "UI/WidgetController/AuraWidgetController.h"
 
-UOverlayWidgetController* UAuraAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
+
+
+
+bool UAuraAbilitySystemLibrary::MakeWidgetControllerParams(const UObject* WorldContextObject,
+	FWidgetControllerParams& OutWCParams, AAuraHUD*& OutAuraHud)
 {
-	if(APlayerController* PC= UGameplayStatics::GetPlayerController(WorldContextObject,0))
+	if(APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject,0))
 	{
-		if(AAuraHUD* AuraHUD=Cast<AAuraHUD>(PC->GetHUD()))
+		OutAuraHud = Cast<AAuraHUD>(PC->GetHUD());
+		if(OutAuraHud)
 		{
 
-			AAuraPlayerState*PS =PC->GetPlayerState<AAuraPlayerState>();
-			UAbilitySystemComponent* ASC=PS->GetAbilitySystemComponent();
-			UAttributeSet* AS=PS->GetAttributeSet();
-			const FWidgetControllerParams WidgetControllerParams(PC,PS,ASC,AS);
-			return AuraHUD->GetOverlayWidgetController(WidgetControllerParams);
+			AAuraPlayerState*PS = PC->GetPlayerState<AAuraPlayerState>();
+			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
+			UAttributeSet* AS = PS->GetAttributeSet();
+			
+			OutWCParams.AttributeSet = AS;
+			OutWCParams.AbilitySystemComponent = ASC;
+			OutWCParams.PlayerState = PS;
+			OutWCParams.PlayerController = PC;
+			return true;
 		}
+	}
+	return false;
+}
+
+UOverlayWidgetController* UAuraAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
+{
+	FWidgetControllerParams WSParams;
+	AAuraHUD* AuraHUD;
+	if(MakeWidgetControllerParams(WorldContextObject, WSParams,AuraHUD))
+	{
+		return AuraHUD->GetOverlayWidgetController(WSParams);
 	}
 	return nullptr;
 }
 
 UAttributeMenuWidgetController* UAuraAbilitySystemLibrary::GetAttributeMenuWidgetController(const UObject* WorldContextObject)
 {
-	if(APlayerController* PC= UGameplayStatics::GetPlayerController(WorldContextObject,0))
+	FWidgetControllerParams WSParams;
+	AAuraHUD* AuraHUD;
+	if(MakeWidgetControllerParams(WorldContextObject, WSParams,AuraHUD))
 	{
-		if(AAuraHUD* AuraHUD=Cast<AAuraHUD>(PC->GetHUD()))
-		{
+		return AuraHUD->GetAttributeMenuWidgetController(WSParams);
+	}
+	return nullptr;
+}
 
-			AAuraPlayerState*PS =PC->GetPlayerState<AAuraPlayerState>();
-			UAbilitySystemComponent* ASC=PS->GetAbilitySystemComponent();
-			UAttributeSet* AS=PS->GetAttributeSet();
-			const FWidgetControllerParams WidgetControllerParams(PC,PS,ASC,AS);
-			return AuraHUD->GetAttributeMenuWidgetController(WidgetControllerParams);
-		}
+USpellMenuWidgetController* UAuraAbilitySystemLibrary::GetSpellMenuWidgetController(const UObject* WorldContextObject)
+{
+	FWidgetControllerParams WSParams;
+	AAuraHUD* AuraHUD;
+	if(MakeWidgetControllerParams(WorldContextObject, WSParams,AuraHUD))
+	{
+		return AuraHUD->GetSpellMenuWidgetController(WSParams);
 	}
 	return nullptr;
 }
@@ -105,10 +129,17 @@ int32 UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(const UObject* Worl
 
 UCharacterClassInfo* UAuraAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
 {
-	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	const AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
 	if(AuraGameMode == nullptr) return nullptr;
 
 	return  AuraGameMode->CharacterClassInfo;
+}
+
+UAbilityInfo* UAuraAbilitySystemLibrary::GetAbilityInfo(const UObject* WorldContextObject)
+{
+	const AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if(AuraGameMode == nullptr) return nullptr;
+	return AuraGameMode->AbilityInfo;
 }
 
 bool UAuraAbilitySystemLibrary::IsBlockedHit(const FGameplayEffectContextHandle& EffectContextHandle)
