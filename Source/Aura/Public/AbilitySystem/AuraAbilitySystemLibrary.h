@@ -70,4 +70,8 @@ public:
 	static bool IsNotFriend(const AActor* FirstActor,const AActor* SecondActor);
 
 	static int32 GetXPRewardForClassAndLevel(const UObject* WorldContextObject, const ECharacterClass CharacterClass, const int32 CharacterLevel);
+
+	UFUNCTION(BlueprintCallable, Category="Widget",  meta=(WorldContext="WorldContextObject", DeterminesOutputType="WidgetClass", DynamicOutputParam="OutWights"))
+	static void GetAllChildrenWidgetOfClass(const UObject* WorldContextObject, const UPanelWidget* ParentPanel, const TSubclassOf<UUserWidget> WidgetClass,
+		TArray<UUserWidget*>& OutWights);
 };

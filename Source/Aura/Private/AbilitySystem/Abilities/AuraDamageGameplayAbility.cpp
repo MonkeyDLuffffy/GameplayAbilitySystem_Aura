@@ -37,6 +37,12 @@ FTaggedMontage UAuraDamageGameplayAbility::GetRandomTaggedMontageFromArray(
 	return FTaggedMontage();
 }
 
+float UAuraDamageGameplayAbility::GetDamageByDamageType(float InLevel, const FGameplayTag& DamageType)const 
+{
+	checkf(DamageTypeMap.Contains(DamageType),TEXT("GameplayAbility [%s] does not contain DamageType [%s]"), *GetNameSafe(this), *DamageType.ToString());
+	return  DamageTypeMap[DamageType].GetValueAtLevel(InLevel);
+}
+
 void UAuraDamageGameplayAbility::UpdateAttackFaceTarget()
 {
 	if(AActor* EnemyActor= IEnemyInterface::Execute_GetCombatTarget(GetAvatarActorFromActorInfo()))

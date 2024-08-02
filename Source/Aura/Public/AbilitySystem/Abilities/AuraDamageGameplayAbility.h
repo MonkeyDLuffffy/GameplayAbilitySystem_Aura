@@ -30,9 +30,10 @@ protected:
 	UFUNCTION(BlueprintPure)
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;
 
+	float GetDamageByDamageType(float InLevel, const FGameplayTag& DamageType) const;
+
 	UFUNCTION(BlueprintCallable)
 	void UpdateAttackFaceTarget();
 
-	//UPROPERTY(BlueprintReadOnly, Category = "TaggedMontage")
-	//FTaggedMontage& TaggedMontage;
+
 };

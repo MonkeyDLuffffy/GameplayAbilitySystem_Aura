@@ -9,7 +9,7 @@
 DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContainer& GameplayTagsMContainer);
 DECLARE_MULTICAST_DELEGATE(FAbilitiesGiven);
 DECLARE_DELEGATE_OneParam(FForEachAbility, const FGameplayAbilitySpec&);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FAbilityStatusChanged, const FGameplayTag& /*AbilityTag*/, const FGameplayTag& /*StatusTag*/)
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FAbilityStatusChanged, const FGameplayTag& /*AbilityTag*/, const FGameplayTag& /*StatusTag*/, int32 /*AbilityLevel*/)
 
 /**
  * 
@@ -46,6 +46,11 @@ public:
 
 	UFUNCTION(Server,Reliable)
 	void ServerUpgradeAttribute(const FGameplayTag& AttributeTag);
+
+	UFUNCTION(Server,Reliable)
+	void ServerSpendSpellPoint(const FGameplayTag& AbilityTag);
+
+	bool GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription, FString& OutNextLevelDescription);
 protected:
 
 	UFUNCTION(Client, Reliable)
@@ -53,7 +58,7 @@ protected:
 
 	/*技能状态改变时，通知到本地客户端，并广播*/
 	UFUNCTION(Client, Reliable)
-	void ClientUpdateAbilityStatus(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag) const;
+	void ClientUpdateAbilityStatus(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag, int32 AbilityLevel) const;
 	
 	virtual void InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor) override;
 

@@ -4,6 +4,8 @@
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 
 #include "AuraAbilityTypes.h"
+#include "UnrealWidgetFwd.h"
+#include "Components/PanelWidget.h"
 #include "Game/AuraGameModeBase.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -126,6 +128,27 @@ int32 UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(const UObject* Worl
 	const float XPReward = Info.XPReward.GetValueAtLevel(CharacterLevel);
 	return static_cast<int32>(XPReward);
 }
+
+void UAuraAbilitySystemLibrary::GetAllChildrenWidgetOfClass(const UObject* WorldContextObject,
+	const UPanelWidget* ParentWidget, const TSubclassOf<UUserWidget> WidgetClass, TArray<UUserWidget*>& OutWights)
+{
+	if(WidgetClass)
+	{
+		TArray<UWidget*> ChildrenWidget = ParentWidget->GetAllChildren();
+		for (UWidget* Widget : ChildrenWidget)
+		{
+			if(Widget->GetClass()->IsChildOf(WidgetClass))
+			{
+				OutWights.Add(Cast<UUserWidget>(Widget));
+			}
+			else if(const UPanelWidget* PanelWidgetTemp = Cast<UPanelWidget>(Widget))
+			{
+				GetAllChildrenWidgetOfClass(WorldContextObject, PanelWidgetTemp, WidgetClass, OutWights);
+			}
+		}
+	}
+}
+
 
 UCharacterClassInfo* UAuraAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
 {
