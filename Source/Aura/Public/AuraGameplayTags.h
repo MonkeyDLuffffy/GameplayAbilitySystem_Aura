@@ -36,14 +36,7 @@ public:
 	FGameplayTag Attribute_Vital_Health;
 	FGameplayTag Attribute_Vital_Mana;
 
-	///火焰抗性
-	FGameplayTag Attributes_Resistance_Fire;
-	///雷电抗性
-	FGameplayTag Attributes_Resistance_Lightning;
-	///奥术抗性
-	FGameplayTag Attributes_Resistance_Arcane;
-	///物理抗性
-	FGameplayTag Attributes_Resistance_Physical;
+
 	
 	FGameplayTag InputTag_LMB;
 	FGameplayTag InputTag_RMB;
@@ -59,7 +52,22 @@ public:
 	FGameplayTag Damage_Lightning;
 	FGameplayTag Damage_Arcane;
 	FGameplayTag Damage_Physical;
+	
+	FGameplayTag Attributes_Resistance_Fire;      //火焰抗性
+	FGameplayTag Attributes_Resistance_Lightning;	//雷电抗性
+	FGameplayTag Attributes_Resistance_Arcane;		//奥数抗性
+	FGameplayTag Attributes_Resistance_Physical;	//物理抗性
 
+	
+	FGameplayTag Debuff_Burn;   //燃烧
+	FGameplayTag Debuff_Stun;	//击晕
+	FGameplayTag Debuff_Arcane;
+	FGameplayTag Debuff_Physical;
+
+	FGameplayTag Debuff_Chance;
+	FGameplayTag Debuff_Damage;
+	FGameplayTag Debuff_Frequency;
+	FGameplayTag Debuff_Duration;
 	
 	FGameplayTag Attributes_Meta_IncomingXP;
 
@@ -95,6 +103,9 @@ public:
 	FGameplayTag Montage_Attack_4;
 
 	TMap<FGameplayTag, FGameplayTag> DamageTypeToResistanceMap;
+	TMap<FGameplayTag, FGameplayTag> DamageTypesToDebuffs;
+	
+	
 	FGameplayTag Effects_HitReact;
 	
 

@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
 #include "AbilitySystemComponent.h"
-#include "GameplayEffectExtension.h"
 #include "AuraAttributeSet.generated.h"
 
 	#define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
@@ -241,8 +240,12 @@ public:
 
 	
 private:
-	void SetEffectProperties(const FGameplayEffectModCallbackData& Data,FEffectProperties&Props) const;
 
+	void HandleIncomingDamage(const FEffectProperties& Props);
+	void HandleIncomingXP(const FEffectProperties& Props);
+	void Debuff(const FEffectProperties& Props);
+	
+	void SetEffectProperties(const FGameplayEffectModCallbackData& Data,FEffectProperties&Props) const;
 	/*显示伤害数字*/
 	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bIsBlockedHit, bool bIsCriticalHit) const;
 
