@@ -30,5 +30,10 @@ protected:
 	void SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch = false, float PitchOverride = 0.f);
 
 	UPROPERTY(EditDefaultsOnly)
-	int32 NumProjectiles = 5;
+	int32 MaxNumProjectiles = 5;
+
+	UPROPERTY(EditDefaultsOnly)
+	bool bUseMaxNumProjectiles = false;
+
+	int32 GetNumProjectiles() const;
 };

@@ -36,6 +36,7 @@ public:
 	virtual int32 GetSpellPoints_Implementation() const override;
 	/**End Player Interface*/
 	
+	
 	/**Combat Interface */
 	virtual int32 GetPlayerLevel_Implementation() override;
 	/**end Combat Interface */

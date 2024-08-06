@@ -251,6 +251,8 @@ private:
 
 	void SendXPEvent(const FEffectProperties& Props);
 
+	void AddImpulse(const FEffectProperties& Props);
+
 	bool bTopOffHealth = false;
 	bool bTopOffMana = false;
 	

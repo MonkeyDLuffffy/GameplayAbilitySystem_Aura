@@ -103,34 +103,34 @@ void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
 {
 	//Source =causer of the effect, Target =target of the effect (owner of this AS)
 	
-	Props.EffectContextHandle=Data.EffectSpec.GetContext();
+	Props.EffectContextHandle = Data.EffectSpec.GetContext();
 	Props.SourceASC = Props.EffectContextHandle.GetOriginalInstigatorAbilitySystemComponent();
 
 	if(IsValid(Props.SourceASC) && Props.SourceASC->AbilityActorInfo.IsValid()&&Props.SourceASC->AbilityActorInfo->AvatarActor.IsValid())
 	{
-		Props.SourceAvatarActor=Props.SourceASC->AbilityActorInfo->AvatarActor.Get();
-		Props.SourceController=Props.SourceASC->AbilityActorInfo->PlayerController.Get();
-		if(Props.SourceController==nullptr&&Props.SourceAvatarActor!=nullptr)
+		Props.SourceAvatarActor = Props.SourceASC->AbilityActorInfo->AvatarActor.Get();
+		Props.SourceController = Props.SourceASC->AbilityActorInfo->PlayerController.Get();
+		if(Props.SourceController == nullptr&&Props.SourceAvatarActor!=nullptr)
 		{
-			if(const APawn * Pawn=Cast<APawn>(Props.SourceAvatarActor))
+			if(const APawn * Pawn = Cast<APawn>(Props.SourceAvatarActor))
 			{
-				Props.SourceController=Pawn->GetController();
+				Props.SourceController = Pawn->GetController();
 			}
 		}
 
 		if(Props.SourceController)
 		{
-			Props.SourceCharacter=Cast<ACharacter>(Props.SourceController->GetPawn());
+			Props.SourceCharacter = Cast<ACharacter>(Props.SourceController->GetPawn());
 		}
 	
 	}
 
 	if(Data.Target.AbilityActorInfo.IsValid()&& Data.Target.AbilityActorInfo->AvatarActor.IsValid())
 	{
-		Props.TargetAvatarActor =Data.Target.AbilityActorInfo->AvatarActor.Get();
-		Props.TargetController=Data.Target.AbilityActorInfo->PlayerController.Get();
-		Props.TargetCharacter=Cast<ACharacter>(Props.TargetAvatarActor);
-		Props.TargetASC=UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Props.TargetAvatarActor);
+		Props.TargetAvatarActor = Data.Target.AbilityActorInfo->AvatarActor.Get();
+		Props.TargetController = Data.Target.AbilityActorInfo->PlayerController.Get();
+		Props.TargetCharacter = Cast<ACharacter>(Props.TargetAvatarActor);
+		Props.TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Props.TargetAvatarActor);
 	}
 	
 }
@@ -146,14 +146,14 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 	if(IsValid(Props.TargetCharacter) && Props.TargetCharacter->Implements<UCombatInterface>() && ICombatInterface::Execute_IsDead(Props.TargetCharacter)) return;
 	
-	if(Data.EvaluatedData.Attribute==GetHealthAttribute())
+	if(Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(),0.0f,GetMaxHealth()));
 	
 	}
 	
 	/* 使用战斗伤害属性来处理伤害，计算伤害后，应用到生命值中*/
-	if(Data.EvaluatedData.Attribute==GetManaAttribute())
+	if(Data.EvaluatedData.Attribute == GetManaAttribute())
 	SetMana(FMath::Clamp(GetMana(),0.0f,GetMaxMana()));
 
 	if(Data.EvaluatedData.Attribute == GetImcomingDamageAttribute())
@@ -182,11 +182,12 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 		{
 			if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor))
 			{
-				CombatInterface->Die();
+				CombatInterface->Die(UAuraAbilitySystemLibrary::GetDeathImpulse(Props.EffectContextHandle));
 			}
 			///敌人死亡时，发送奖励XP的事件
 			SendXPEvent(Props);
-				
+
+			AddImpulse(Props);
 		}
 		else
 		{
@@ -195,12 +196,17 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 			TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
 			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 
+			const FVector& KnockbackForce = UAuraAbilitySystemLibrary::GetKnockbaclForce(Props.EffectContextHandle);
+			if(!KnockbackForce.IsNearlyZero(1.f))
+			{
+				Props.TargetCharacter->LaunchCharacter(KnockbackForce, true, true);
+			}
+
 			//UE_LOG(LogTemp, Warning, TEXT("target Fire Resistance : %f"),GetFireResistance());
 		}
 		const bool bBlock = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
 		const bool bCriticalHit = UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
 		ShowFloatingText(Props, LocalIncomingDanage, bBlock, bCriticalHit);
-
 		if(UAuraAbilitySystemLibrary::IsSuccessfulDebuff(Props.EffectContextHandle))
 		{
 			//Handle Debuff
@@ -333,7 +339,7 @@ void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props)
    {
 	   	const int32 TargetLevel = ICombatInterface::Execute_GetPlayerLevel(Props.TargetCharacter);
 	   	const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(Props.TargetCharacter);
-	   	const int32 XPReward =20* UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(this, TargetClass, TargetLevel);
+	   	const int32 XPReward = 20 * UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(this, TargetClass, TargetLevel);
 
 		const FGameplayTag& EventTag = FAuraGameplayTags::Get().Attributes_Meta_IncomingXP;
 	   	FGameplayEventData Payload;
@@ -342,6 +348,14 @@ void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props)
 	   	
 	   	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Props.SourceCharacter, EventTag, Payload);
    }
+}
+
+void UAuraAttributeSet::AddImpulse(const FEffectProperties& Props)
+{
+	if(Props.TargetCharacter->Implements<UCombatInterface>())
+	{
+		
+	}
 }
 
 void UAuraAttributeSet::OnRep_Strength(const FGameplayAttributeData& OldStrength) const

@@ -29,7 +29,7 @@ TArray<FVector> UAuraSummonAbility::GetSpawnLocations() const
 	
 	for(int32 i = 0; i < NumMinions; i++)
 	{
-		const FVector Direction = RightOfSpread.RotateAngleAxis(-DeltaSpread*i, FVector::UpVector);
+		const FVector Direction = RightOfSpread.RotateAngleAxis(-DeltaSpread * i, FVector::UpVector);
 		FVector ChosenSpawnLocation = Location + Direction * FMath::FRandRange(MinSpawnDistance, MaxSpawnDistance);
 		
 		FHitResult Hit;
