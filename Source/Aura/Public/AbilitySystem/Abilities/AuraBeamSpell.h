@@ -24,6 +24,15 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void TraceFirstTarget(const FVector& BeamTargetLocation, float Radius = 10.f);
+	
+	UFUNCTION(BlueprintCallable)
+	void StoreAdditionalTargets(TArray<AActor*>& OutAdditionalTargets);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PrimatyTargetDied(AActor* DeadActor);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void AdditionalTargetDied(AActor* DeadActor);
 protected:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Beam")
@@ -37,4 +46,15 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Beam")
 	TObjectPtr<ACharacter> OwnerCharacter;
+
+	UPROPERTY(EditDefaultsOnly)
+	int32 MaxNumShockTargets = 5;
+
+	UPROPERTY(EditDefaultsOnly)
+	bool bUseMaxNumShockTargets = false;
+
+	UPROPERTY(EditDefaultsOnly)
+	float ShockTargetRadius = 500.f;
+
+	int32 GetNumShockTargets() const;
 };

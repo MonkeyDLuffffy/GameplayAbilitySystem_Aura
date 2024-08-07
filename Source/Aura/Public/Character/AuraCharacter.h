@@ -61,4 +61,7 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastLevelUpParticles() const;
+
+	virtual  void OnRep_Stunned() override;
+
 };

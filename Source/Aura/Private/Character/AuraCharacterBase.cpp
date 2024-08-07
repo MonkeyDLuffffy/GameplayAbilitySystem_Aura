@@ -13,7 +13,8 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
 
 AAuraCharacterBase::AAuraCharacterBase()
 {
@@ -101,9 +102,9 @@ FOnASCRegistered AAuraCharacterBase::GetOnASCRegisteredDelegate()
 	return OnAscRegistered;
 }
 
-FOnDeath AAuraCharacterBase::GetOnDeathDelegate()
+FOnDeathSignature& AAuraCharacterBase::GetOnDeathDelegate()
 {
-	return OnDeath;
+	return OnDeathDelegate;
 }
 
 USkeletalMeshComponent* AAuraCharacterBase::GetWeapon_Implementation()
@@ -135,17 +136,43 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation(const FVector& Deat
 	Dissolve();
 
 	bDead = true;
-
-	OnDeath.Broadcast(this);
+	OnDeathDelegate.Broadcast(this);
 	BurnDebuffComponent->Deactivate();
 }
 
+
+void AAuraCharacterBase::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	bIsStunned = NewCount > 0;
+	GetCharacterMovement()->MaxWalkSpeed = bIsStunned ? 0.f : BaseWalkSpeed;
+	if(bIsStunned)
+	{
+		UE_LOG(LogAura, Warning, TEXT("%s 's bisStunned is  true"), *GetName());
+	}
+	else
+	{
+		UE_LOG(LogAura, Warning, TEXT("%s 's bisStunned is  false"), *GetName());
+	}
+		
+	
+
+}
+
+void AAuraCharacterBase::OnRep_Stunned()
+{
+	
+}
 
 void AAuraCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	OnDeath.AddDynamic(this, &AAuraCharacterBase::TestOnDeathDelegate);
+}
+
+void AAuraCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AAuraCharacterBase, bIsStunned);
 }
 
 FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag )

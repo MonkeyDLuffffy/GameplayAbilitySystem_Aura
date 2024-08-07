@@ -47,11 +47,11 @@ public:
 
 	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 
+	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
+	
 	UPROPERTY(BlueprintReadOnly, Category = "Combat")
 	bool bhitReacting = false;
-
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Combat")
-	float BaseWalkSpeed = 250.f;
+	
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Combat")
 	float LifeSpan = 5.f;
@@ -70,6 +70,7 @@ protected:
 	int32 Level=1;
 
 
+	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> HealthBar;
