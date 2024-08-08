@@ -42,14 +42,17 @@ void UDebuffNiagaraComponent::DebuffTagChanged(const FGameplayTag CallbackTag, i
 	if(NewCount > 0 && bOwnerValid && bOwnerAlive)
 	{
 		Activate();
+		SetVisibility(true);
 	}
 	else
 	{
 		Deactivate();
+		SetVisibility(false);
 	}
 }
 
 void UDebuffNiagaraComponent::OnOwnerDeath(AActor* DeadActor)
 {
 	Deactivate();
+	SetVisibility(false);
 }

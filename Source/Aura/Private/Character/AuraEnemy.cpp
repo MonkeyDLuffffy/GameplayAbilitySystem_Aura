@@ -88,6 +88,16 @@ void AAuraEnemy::Die(const FVector& DeathImpulse)
 	Super::Die(DeathImpulse);
 }
 
+void AAuraEnemy::SetIsBeingShock_Implementation(bool bInShock)
+{
+	Super::SetIsBeingShock_Implementation(bInShock);
+	
+	if(AuraAIController && AuraAIController->GetBlackboardComponent())
+	{
+		AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("Shocked"), bInShock);
+	}
+}
+
 void AAuraEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
 	this->bhitReacting = NewCount > 0;

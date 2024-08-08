@@ -36,7 +36,7 @@ void UAuraWidgetController::BroadcastAbilityInfo()
 	BroadcastDelegate.BindLambda([this](const FGameplayAbilitySpec& AbilitySpec)
 	{
 		FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(UAuraAbilitySystemComponent::GetAbilityTagFromSpec(AbilitySpec));
-		Info.InputTag = GetAuraASC()->GetInputTagFromSpec(AbilitySpec);
+		Info.InputTag = GetAuraASC()->GetSlotFromSpec(AbilitySpec);
 		Info.StatusTag = GetAuraASC()->GetStatusTagFromSpec(AbilitySpec);
 		AbilityInfoDelegate.Broadcast(Info);
 	});

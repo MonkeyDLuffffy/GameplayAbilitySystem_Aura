@@ -7,11 +7,10 @@
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Particles/ParticleSystemComponent.h"
 
 void UAuraBeamSpell::StoreMouseDataInfo(const FHitResult& HitResult)
 {
-	if(HitResult.bBlockingHit)
+	if(HitResult.bBlockingHit) 
 	{
 		MouseHitLocation = HitResult.Location;
 		MouseHitActor = HitResult.GetActor();
@@ -76,7 +75,7 @@ void UAuraBeamSpell::StoreAdditionalTargets(TArray<AActor*>& OutAdditionalTarget
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(GetAvatarActorFromActorInfo());
 	ActorsToIgnore.Add(MouseHitActor);
-
+	
 	TArray<AActor*> OverlappingActors;
 	UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(GetAvatarActorFromActorInfo(), OverlappingActors, ActorsToIgnore, ShockTargetRadius, MouseHitActor->GetActorLocation());
 

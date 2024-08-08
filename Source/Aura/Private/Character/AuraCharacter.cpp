@@ -12,6 +12,8 @@
 #include "Player/AuraPlayerState.h"
 #include "UI/HUD/AuraHUD.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
+#include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
+#include "Aura/AuraLogChannels.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
@@ -202,10 +204,29 @@ void AAuraCharacter::OnRep_Stunned()
 		if(bIsStunned)
 		{
 			AuraASC->AddLooseGameplayTags(BlockedTags);
+			StunDebuffComponent->Activate();
+			StunDebuffComponent->SetVisibility(true);
 		}
 		else
 		{
+			UE_LOG(LogAura, Warning, TEXT("%s 's bisStunned is  false1111"), *GetName());
 			AuraASC->RemoveLooseGameplayTags(BlockedTags);
+			StunDebuffComponent->Deactivate();
+			StunDebuffComponent->SetVisibility(false);
 		}
+	}
+}
+
+void AAuraCharacter::OnRep_Burned()
+{
+	if(bIsBurned)
+	{
+		BurnDebuffComponent->Activate();
+		BurnDebuffComponent->SetVisibility(true);
+	}
+	else
+	{
+		BurnDebuffComponent->Deactivate();
+		BurnDebuffComponent->SetVisibility(false);
 	}
 }

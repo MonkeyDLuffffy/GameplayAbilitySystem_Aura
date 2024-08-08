@@ -37,6 +37,8 @@ public:
 	virtual int32 GetPlayerLevel_Implementation() override;
 
 	virtual void Die(const FVector& DeathImpulse) override;
+
+	virtual void SetIsBeingShock_Implementation(bool bInShock) override;
 	/**end Combat Interface */
 
 	UPROPERTY(BlueprintAssignable)

@@ -191,10 +191,14 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 		}
 		else
 		{
-			/*受到伤害后，如果没死亡，则激活受击反应能力*/
-			FGameplayTagContainer TagContainer;
-			TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
-			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			//如果震惊的时候，播放震惊的反应，不播放受击反应
+			if(Props.TargetCharacter->Implements<UCombatInterface>() && !ICombatInterface::Execute_IsBeingShock(Props.TargetCharacter))
+			{
+				/*受到伤害后，如果没死亡，则激活受击反应能力*/
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
+				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			}
 
 			const FVector& KnockbackForce = UAuraAbilitySystemLibrary::GetKnockbaclForce(Props.EffectContextHandle);
 			if(!KnockbackForce.IsNearlyZero(1.f))
