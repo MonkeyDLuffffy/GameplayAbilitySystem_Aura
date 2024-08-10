@@ -79,7 +79,7 @@ void UAuraBeamSpell::StoreAdditionalTargets(TArray<AActor*>& OutAdditionalTarget
 	TArray<AActor*> OverlappingActors;
 	UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(GetAvatarActorFromActorInfo(), OverlappingActors, ActorsToIgnore, ShockTargetRadius, MouseHitActor->GetActorLocation(), GetAvatarActorFromActorInfo());
 
-	UAuraAbilitySystemLibrary::GetClosestTargets(GetNumShockTargets(), OverlappingActors, OutAdditionalTargets, MouseHitActor->GetActorLocation());
+	UAuraAbilitySystemLibrary::GetClosestTargets(GetNumSpellsEffect(), OverlappingActors, OutAdditionalTargets, MouseHitActor->GetActorLocation());
 	for (AActor* Target : OutAdditionalTargets)
 	{
 		if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(Target))
@@ -92,9 +92,9 @@ void UAuraBeamSpell::StoreAdditionalTargets(TArray<AActor*>& OutAdditionalTarget
 	}
 }
 
-int32 UAuraBeamSpell::GetNumShockTargets() const
- 
+int32 UAuraBeamSpell::GetNumSpellsEffect(int InLevel) const
 {
-	if(bUseMaxNumShockTargets) return MaxNumShockTargets - 1;
-	return FMath::Min(GetAbilityLevel() - 1, MaxNumShockTargets - 1);
+	if(bUseMaxNumSpellsEffect) return MaxNumSpellsEffect - 1;
+	return InLevel < 1 ? FMath::Min(GetAbilityLevel() - 1, MaxNumSpellsEffect - 1) :  FMath::Min(InLevel - 1, MaxNumSpellsEffect - 1);
 }
+

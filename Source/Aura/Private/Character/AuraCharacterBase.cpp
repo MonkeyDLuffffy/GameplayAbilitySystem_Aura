@@ -83,6 +83,11 @@ void AAuraCharacterBase::TestOnDeathDelegate(AActor* DeathActor)
 	UE_LOG(LogAura, Warning, TEXT("Death: %s"), *this->GetName());
 }
 
+void AAuraCharacterBase::TestOnDamageDelegate(float InDamage)
+{
+	UE_LOG(LogAura, Warning, TEXT("Damage: %f"),InDamage);
+}
+
 UAnimMontage* AAuraCharacterBase::GetHitReactMontage_Implementation()
 {
 	return HitReactMontage;

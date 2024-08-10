@@ -46,15 +46,3 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
 	Projectile->FinishSpawning(SpawnTransform);
 }
-
-int32 UAuraProjectileSpell::GetNumProjectiles() const
-{
-	if(bUseMaxNumProjectiles)
-	{
-		return MaxNumProjectiles;
-	}
-	else
-	{
-		return FMath::Min(GetAbilityLevel(), MaxNumProjectiles);
-	}
-}

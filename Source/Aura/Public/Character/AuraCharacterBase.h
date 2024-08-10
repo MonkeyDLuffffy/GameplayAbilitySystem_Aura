@@ -32,6 +32,7 @@ public:
 
 	UFUNCTION()
 	void TestOnDeathDelegate(AActor* DeathActor);
+	void TestOnDamageDelegate(float InDamage);
 	/** Combat Interface*/
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag ) override;

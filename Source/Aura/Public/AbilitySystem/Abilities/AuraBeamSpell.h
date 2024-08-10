@@ -47,15 +47,20 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Beam")
 	TObjectPtr<ACharacter> OwnerCharacter;
-
-	UPROPERTY(EditDefaultsOnly)
-	int32 MaxNumShockTargets = 5;
+	
 
 	UPROPERTY(EditDefaultsOnly)
 	bool bUseMaxNumShockTargets = false;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float DamageAndCostDeltaTime = 0.3f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float MaxSpellDurationTime = 10.f;
+	
 	UPROPERTY(EditDefaultsOnly)
 	float ShockTargetRadius = 500.f;
 
-	int32 GetNumShockTargets() const;
+	virtual int32 GetNumSpellsEffect(int InLevel = -1) const override;
+	
 };

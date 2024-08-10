@@ -20,7 +20,14 @@ public:
 	void CauseDamage(AActor* TargetActor);
 
 	UFUNCTION(BlueprintPure)
-	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const;
+	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(FVector InRadiaDamageOrigin = FVector::ZeroVector,
+		AActor* TargetActor = nullptr,
+		bool bOverrideKnockbackDirection = false,
+		FVector KnockbackDirectionOverride = FVector::ZeroVector,
+		bool bOverrideDeathImpulse = false,
+		FVector DeathImpulseDirectionOverride = FVector::ZeroVector,
+		bool bOverridePitch = false,
+		float PitchOverride = 0.f) const;
 
 	UFUNCTION(BlueprintPure)
 	float GetDamageAtLevel() const;
@@ -75,6 +82,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")
 	float RadialDamageOuterRadius = 0.f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Damage")
-	FVector RadialDamageOrigin = FVector::ZeroVector;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "SpellsEffectNum")
+	int32 MaxNumSpellsEffect = 11;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "SpellsEffectNum")
+	bool bUseMaxNumSpellsEffect = false;
+
+	UFUNCTION(BlueprintPure, Category = "SpellsEffectNum")
+	virtual int32 GetNumSpellsEffect(int InLevel = -1) const;
 };

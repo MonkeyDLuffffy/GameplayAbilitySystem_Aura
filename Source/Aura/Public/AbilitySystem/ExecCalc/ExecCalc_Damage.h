@@ -19,6 +19,6 @@ public:
 	                     const FGameplayEffectSpec& Spec,
 	                     const FAggregatorEvaluateParameters& EvaluateParameters,
 	                     const TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition>& TagsToCaptureDefMap) const;
-
+	void TestDelegate(float InDamage);
 	virtual void Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const override;
 };

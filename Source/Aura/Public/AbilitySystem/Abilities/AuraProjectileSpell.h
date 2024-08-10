@@ -23,17 +23,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AAuraProjectile> ProjectileClass;
-
-
-
+	
 	UFUNCTION(BlueprintCallable)
 	void SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch = false, float PitchOverride = 0.f);
-
-	UPROPERTY(EditDefaultsOnly)
-	int32 MaxNumProjectiles = 5;
-
-	UPROPERTY(EditDefaultsOnly)
-	bool bUseMaxNumProjectiles = false;
-
-	int32 GetNumProjectiles() const;
+	
 };

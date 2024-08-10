@@ -9,6 +9,8 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/AuraAttributeSet.h"
+#include "Aura/AuraLogChannels.h"
+#include "Character/AuraCharacterBase.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -111,6 +113,12 @@ const TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition>& TagsToCaptu
 	}
 }
 
+void UExecCalc_Damage::TestDelegate(float InDamage)
+{
+	float Damage = InDamage;
+	UE_LOG(LogAura, Warning, TEXT("Delegate Damage: %f"),InDamage);
+}
+
 void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
                                               FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
@@ -175,6 +183,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 		/*伤害来源自GA的分配：如AuraProjectileSpell的SpawnSpell函数中*/
 		float DamageTypeValue = Spec.GetSetByCallerMagnitude(DamageTypeTag, false);
+		if(DamageTypeValue <= 0.f) continue;
 		
 		float Resistance = 0.f;
 		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(CaptureDef, EvaluateParameters, Resistance);
@@ -182,6 +191,8 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		
 		DamageTypeValue *= (100.f - Resistance) / 100.f;
 
+		
+		
 		if(UAuraAbilitySystemLibrary::IsRadialDamage(EffectContextHandle))
 		{
 			//1.override TakeDamage in AuraCharacterBase
@@ -191,18 +202,30 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 			//5.在拉姆达函数中，应用伤害
 			if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(TargetAvatar))
 			{
-				CombatInterface->GetOnDamageSignature().AddLambda([&](float DamageAmount)
+				FOnDamageSignature& OnDamageSignature = CombatInterface->GetOnDamageSignature();
+				AAuraCharacterBase* Target =Cast<AAuraCharacterBase>(TargetAvatar) ;
+
+				//OnDamageSignature.AddUObject(Target, &AAuraCharacterBase::TestOnDamageDelegate);
+		
+				FDelegateHandle StaticHandle = OnDamageSignature.AddLambda([&](float DamageAmount)
 				{
+					//DamageTest = Damage1;
+					//UE_LOG(LogAura, Warning, TEXT("Lambda ExecCalc Damage: %f"),DamageAmount);
 					DamageTypeValue = DamageAmount;
+					OnDamageSignature.Remove(StaticHandle);
 				});
+		
 			}
+			const FVector Origin = UAuraAbilitySystemLibrary::GetRadialDamageOrigin(EffectContextHandle);
+			const float Outer = UAuraAbilitySystemLibrary::GetRadialDamageOuterRadius(EffectContextHandle);
+			const float Inner = UAuraAbilitySystemLibrary::GetRadialDamageInnerRadius(EffectContextHandle);
 			UGameplayStatics::ApplyRadialDamageWithFalloff(
 				TargetAvatar,
 				DamageTypeValue,
 				0.f,
-				UAuraAbilitySystemLibrary::GetRadialDamageOrigin(EffectContextHandle),
-				UAuraAbilitySystemLibrary::GetRadialDamageOuterRadius(EffectContextHandle),
-				UAuraAbilitySystemLibrary::GetRadialDamageOuterRadius(EffectContextHandle),
+				Origin,
+				Inner,
+				Outer,
 				1.f,
 				UDamageType::StaticClass(),
 				TArray<AActor*>(),
