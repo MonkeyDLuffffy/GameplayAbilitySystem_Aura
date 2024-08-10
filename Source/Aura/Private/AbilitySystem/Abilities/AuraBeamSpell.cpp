@@ -77,7 +77,7 @@ void UAuraBeamSpell::StoreAdditionalTargets(TArray<AActor*>& OutAdditionalTarget
 	ActorsToIgnore.Add(MouseHitActor);
 	
 	TArray<AActor*> OverlappingActors;
-	UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(GetAvatarActorFromActorInfo(), OverlappingActors, ActorsToIgnore, ShockTargetRadius, MouseHitActor->GetActorLocation());
+	UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(GetAvatarActorFromActorInfo(), OverlappingActors, ActorsToIgnore, ShockTargetRadius, MouseHitActor->GetActorLocation(), GetAvatarActorFromActorInfo());
 
 	UAuraAbilitySystemLibrary::GetClosestTargets(GetNumShockTargets(), OverlappingActors, OutAdditionalTargets, MouseHitActor->GetActorLocation());
 	for (AActor* Target : OutAdditionalTargets)

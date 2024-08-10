@@ -11,11 +11,13 @@
 #include "NavigationSystem.h"
 #include "NiagaraFunctionLibrary.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "Actor/MagicCircle.h"
 #include "Components/SplineComponent.h"
 #include "Input/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
 #include "GameFramework/Character.h"
 #include "UI/Widget/DamageTextComponent.h"
+//#include "Aura/Public/Actor/MagicCircle.h"
 
 
 //#include "Axis.h"
@@ -40,6 +42,32 @@ bool AAuraPlayerController::FindMouseResultHit(FHitResult& HitResult) const
 	return HitResult.bBlockingHit;
 }
 
+
+void AAuraPlayerController::ShowMagicCircle(UMaterialInterface* DecalMaterial)
+{
+	if(!IsValid(MagicCircle))
+	{
+		MagicCircle = GetWorld()->SpawnActor<AMagicCircle>(MagicCircleClass);
+		bShowMouseCursor = false;
+		if(DecalMaterial != nullptr)
+		{
+			MagicCircle->SetDecalMaterial(DecalMaterial);
+			
+		}
+	}
+		
+}
+
+void AAuraPlayerController::HideMagicCircle()
+{
+	if(IsValid(MagicCircle))
+	{
+		MagicCircle->Destroy();
+	}
+	bShowMouseCursor = true;
+		
+}
+
 void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter,const bool bIsBlockedHit,const bool bIsCriticalHit)
 {
 	if(IsValid(TargetCharacter) && DamageTextComponentClass && IsLocalController())
@@ -59,6 +87,7 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 
 	CursorTrace();
 	AutoRun();
+	UpdateMagicCircleLocation();
 }
 
 void AAuraPlayerController::CursorTrace()
@@ -103,6 +132,15 @@ void AAuraPlayerController::AutoRun()
 		}
 	}
 }
+
+void AAuraPlayerController::UpdateMagicCircleLocation()
+{
+	if(IsValid(MagicCircle))
+	{
+		MagicCircle->SetActorLocation(CursorHit.ImpactPoint);
+	}
+}
+
 
 
 void AAuraPlayerController::BeginPlay()

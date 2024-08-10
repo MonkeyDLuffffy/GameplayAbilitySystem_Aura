@@ -8,6 +8,7 @@
 #include "Interaction/CombatInterface.h"
 #include "AuraCharacterBase.generated.h"
 
+
 class UPassiveNiagaraComponent;
 class UDebuffNiagaraComponent;
 class UNiagaraSystem;
@@ -24,6 +25,8 @@ class AURA_API AAuraCharacterBase : public ACharacter,public IAbilitySystemInter
 public:
 	AAuraCharacterBase();
 	virtual void Tick(float DeltaSeconds) override;
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
@@ -46,12 +49,14 @@ public:
 	virtual USkeletalMeshComponent* GetWeapon_Implementation() override;
 	virtual void SetIsBeingShock_Implementation(bool bInShock) override;
 	virtual bool IsBeingShock_Implementation() const override;
+	virtual FOnDamageSignature& GetOnDamageSignature() override;
 	/** Combat Interface*/
 	
 	FOnASCRegistered OnAscRegistered;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnDeathSignature OnDeathDelegate;
+	FOnDamageSignature OnDamageDelegate;
 	
 	UFUNCTION(NetMulticast,Reliable)
 	virtual void MulticastHandleDeath(const FVector& DeathImpulse);
