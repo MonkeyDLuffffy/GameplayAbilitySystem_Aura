@@ -6,6 +6,7 @@
 #include "AbilitySystem/Abilities/AuraDamageGameplayAbility.h"
 #include "AuraFireBlast.generated.h"
 
+class AAuraFireBall;
 /**
  * 
  */
@@ -17,4 +18,18 @@ public:
 	UAuraFireBlast();
 	virtual FString GetDescription(int32 Level) override;
 	virtual FString GetNextLevelDescription(int32 Level) override;
+
+	UFUNCTION(BlueprintCallable)
+	TArray<AAuraFireBall*> SpawnFireBalls();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float TravelDistance = 1000.f;
+
+	float ExplosionDistance = 50.f;
+	
+private:
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AAuraFireBall> FireBallClass;
+
 };

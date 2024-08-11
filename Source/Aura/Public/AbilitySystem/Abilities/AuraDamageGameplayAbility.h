@@ -90,4 +90,6 @@ protected:
 
 	UFUNCTION(BlueprintPure, Category = "SpellsEffectNum")
 	virtual int32 GetNumSpellsEffect(int InLevel = -1) const;
+
+
 };

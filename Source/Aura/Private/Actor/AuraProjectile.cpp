@@ -61,10 +61,7 @@ void AAuraProjectile::Destroyed()
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlapPrimitiveComponent, AActor* OtherActor,
                                       UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if(DamageEffectParams.SourceAbilitySystemComponent == nullptr || DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor() == nullptr) return;
-	const AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
-	if(SourceAvatarActor == OtherActor) return;
-	if(!UAuraAbilitySystemLibrary::IsNotFriend(SourceAvatarActor, OtherActor)) return;
+	if(!IsValidOverlap(OtherActor)) return;
 	
 	if(!bHit) OnHit();
 	
@@ -107,5 +104,14 @@ void AAuraProjectile:: OnHit()
 		LoopingSoundComponent->DestroyComponent();
 	}
 	bHit = true;
+}
+
+bool AAuraProjectile::IsValidOverlap(AActor* OtherActor) const
+{
+	if(DamageEffectParams.SourceAbilitySystemComponent == nullptr || DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor() == nullptr) return false;
+	const AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
+	if(SourceAvatarActor == OtherActor) return false;
+	if(!UAuraAbilitySystemLibrary::IsNotFriend(SourceAvatarActor, OtherActor)) return false;
+	return true;
 }
 
