@@ -33,7 +33,13 @@ public:
 	FString PLayerName = FString("Default Name");
 
 	UPROPERTY()
+	FString MapName = FString("DefaultMapName");
+
+	UPROPERTY()
 	TEnumAsByte<ESaveSlotStatus> SaveSlotStatus = Vacant;
+
+	UPROPERTY()
+	FName PlayerStartTag = FName();
 	
 	UPROPERTY()
 	int32 SwitcherIndex = 0;
